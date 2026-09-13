@@ -1,0 +1,62 @@
+# copy to haptic-bridge.toml (git-ignored) and adjust.
+# search order: $HAPTIC_BRIDGE_CONFIG, ./haptic-bridge.toml, ~/.haptic-bridge.toml
+
+[server]
+host = "127.0.0.1"
+port = 8787
+# auth_token = "change-me-please"   # optional; HAPTIC_BRIDGE_TOKEN env var takes precedence
+
+[engine]
+max_intensity = 0.8   # global cap 0..1, applied to every pattern before it reaches a device
+cooldown_ms = 1500    # the same (source, kind) pair fires at most once per window
+
+# event kind -> pattern name. kinds: permission, input, done, custom
+[events]
+permission = "permission"
+input = "input"
+done = "done"
+
+[patterns.permission]
+color = [255, 160, 0]
+pulses = [
+  { intensity = 0.6, duration_ms = 180, pause_ms = 120 },
+  { intensity = 0.6, duration_ms = 180 },
+]
+
+[patterns.input]
+color = [0, 120, 255]
+pulses = [{ intensity = 0.4, duration_ms = 400 }]
+
+[patterns.done]
+color = [0, 200, 90]
+pulses = [{ intensity = 0.8, duration_ms = 500 }]
+
+# one table per backend; unknown names are rejected at startup
+
+[backends.mock]
+enabled = true
+realtime = false   # true: sleep for the real pulse durations (useful to eyeball timing in logs)
+
+[backends.dualsense]
+enabled = true     # ps5 controller over usb (pip extra "dualsense")
+lightbar = true    # paint the lightbar with the pattern color
+
+[backends.openshock]
+enabled = false
+api_url = "https://api.openshock.app"   # or your self-hosted instance
+# token = "..."                          # prefer the OPENSHOCK_TOKEN env var
+shockers = []                            # uuids; empty = every shocker the token owns
+control_type = "Vibrate"                 # Vibrate | Sound | Shock
+allow_shock = false                      # "Shock" is refused unless this is true
+max_intensity = 50                       # hard cap in openshock units 0..100
+exclusive = true                         # override live-control sessions on the hub
+timeout_s = 5.0
+
+[backends.lovense]
+enabled = false
+# lovense remote in game mode: Discover -> Game Mode -> Enable LAN. no developer token needed.
+# pc app: https://127-0-0-1.lovense.club:30010; phone: https://<lan-ip-with-dashes>.lovense.club:<port>
+base_url = "https://127-0-0-1.lovense.club:30010"
+toys = []            # toy ids from `haptic-bridge devices`; empty = every toy
+max_strength = 20    # 0..20 in lovense units
+timeout_s = 3.0

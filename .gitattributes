@@ -1,0 +1,16 @@
+* text=auto eol=lf
+
+*.py text diff=python
+*.toml text
+*.md text diff=markdown
+*.json text
+justfile text
+
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+
+uv.lock -diff linguist-generated
+
+*.png binary
+*.jpg binary
+*.gif binary

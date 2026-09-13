@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "haptic-bridge": {
+      "command": "uv",
+      "args": ["run", "haptic-bridge", "mcp"]
+    }
+  }
+}

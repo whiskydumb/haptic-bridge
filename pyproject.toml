@@ -1,0 +1,51 @@
+[project]
+name = "haptic-bridge"
+version = "0.1.0"
+description = "local daemon that turns coding-agent lifecycle events (claude code, codex) into haptic feedback on physical devices"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+dependencies = [
+    "aiohttp>=3.10",
+    "pydantic>=2.7",
+    "structlog>=24.1",
+]
+
+[project.optional-dependencies]
+dualsense = ["pydualsense>=0.7"]
+mcp = ["mcp>=2.2"]
+
+[project.scripts]
+haptic-bridge = "haptic_bridge.cli:main"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.6",
+    "mypy>=1.11",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/haptic_bridge"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "N", "ANN", "ASYNC", "S", "RUF", "SIM", "PTH"]
+ignore = ["ANN401"]
+
+[tool.mypy]
+strict = true
+python_version = "3.12"
+packages = ["haptic_bridge"]
+mypy_path = "src"
+
+[[tool.mypy.overrides]]
+module = "pydualsense.*"
+ignore_missing_imports = true
