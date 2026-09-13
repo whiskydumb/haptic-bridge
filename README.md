@@ -31,8 +31,25 @@ daemon runs with built-in defaults and the `mock` backend only. `just` lists the
 
 ### claude code
 
-This repo ships `.claude/settings.json` with `http` hooks for `Notification` and `Stop`.
-To get feedback from every project, merge the same block into `~/.claude/settings.json`.
+Add `http` hooks to `~/.claude/settings.json` (every project) or to `.claude/settings.json`
+of a single project, then restart Claude Code:
+
+```json
+{
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "permission_prompt|idle_prompt|agent_needs_input|elicitation_dialog",
+        "hooks": [{ "type": "http", "url": "http://127.0.0.1:8787/hook/claude", "timeout": 2 }]
+      }
+    ],
+    "Stop": [
+      { "hooks": [{ "type": "http", "url": "http://127.0.0.1:8787/hook/claude", "timeout": 2 }] }
+    ]
+  }
+}
+```
+
 HTTP hooks post the hook payload as JSON and block until the daemon answers, so the daemon
 replies immediately and plays the pattern in the background.
 
